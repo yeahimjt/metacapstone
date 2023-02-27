@@ -1,5 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
+import {useFormik} from 'formik';
+import * as Yup from 'yup';
+
 const seededRandom = function (seed) {
     var m = 2**35 - 31;
     var a = 185852;
@@ -40,7 +43,26 @@ const Form = () => {
         specialRequests: "",
     })
     let navigate = useNavigate()
-
+    const formik=useFormik({
+        initialValues: {
+            name:"",
+            date: "",
+            time: "",
+            for: "",
+            table: "",
+            specialRequests: "",
+        },
+        onSubmit: values=> {
+            alert(JSON.stringify(values,null,2));
+        },
+        validationSchema: Yup.object({
+            name: Yup.string().max(35,'Must be 35 characters or less').required("Required"),
+            date: Yup.string().required("Required"),
+            time: Yup.string().required("Required"),
+            for: Yup.string().required("Required"),
+            table:Yup.string().required("Required"),
+        })
+    })
     useEffect(() => {
         let availableTimes;
         if (checkDate) {
@@ -51,14 +73,17 @@ const Form = () => {
         }
     },[checkDate]);
     console.log(availableTime)
-    const handleChange = e => {
-        if (e.target.name === 'date') {
-            setCheckDate(e.target.value)
+
+
+    useEffect(() => {
+        let availableTimes;
+        if (formik.values.date) {
+
+            availableTimes = (fetchAPI(formik.values.date));
+            setAvailableTimes(availableTimes)
+            console.log("Returning")
         }
-        setFormData((prev) => {
-            return {...prev, [e.target.name]: e.target.value}
-        })
-    }
+    }, [formik.values.date])
 
 
     const handleClick = (e) => {
@@ -70,7 +95,7 @@ const Form = () => {
         }
     }
 
-
+    console.log('Formik',Object.keys(formik.errors).length)
 
   return (
     <>
@@ -78,48 +103,67 @@ const Form = () => {
         <h1 className="text-4xl">Create a Reservation</h1>
         <p className="italic text-lg">Fill out the form below with all required fields to create a reservation. You will be updated on the status of your reservation.</p>
     </div>
-    <div className="flex h-[65vh] p-20">
-        <form className="flex flex-[0.5] mx-auto gap-5 flex-col">
+    <div className="flex h-[70vh] p-20">
+        <form className="flex flex-[0.5] mx-auto gap-5 flex-col" onSubmit={formik.handleSubmit}>
             <h1 className="text-3xl pt-5">Reservation Form</h1>
             <hr className="w-80"/>
             <div className="flex flex-col">
                 <label>Name</label>
-                <input className="bg-gray-200 p-4" type="text" onChange={handleChange} name="name"/>
+                <input className="bg-gray-200 p-4" type="text" onChange={formik.handleChange} value={formik.values.name} name="name"/>
+                {formik.errors.name &&
+                    <p className="text-red-400">Required</p>
+                }
             </div>
             <div className="flex flex-col">
                 <label>Date</label>
-                <input type="date" className="bg-gray-200 p-4" onChange= {handleChange} name="date"/>
+                <input type="date" className="bg-gray-200 p-4" onChange= {formik.handleChange} value={formik.values.date} name="date"/>
+                {formik.errors.date &&
+                    <p className="text-red-400">Required</p>
+                }
             </div>
             <div className="flex flex-col">
                 <label>Time</label>
-                <select type="time" className="bg-gray-200 p-4" onChange={handleChange} name="time">
+                <select type="time" className="bg-gray-200 p-4" onChange={formik.handleChange} value={formik.values.time} name="time">
+                    <option>Choose...</option>
+
                     {availableTime && availableTime.map((time) =>
-                        <option>{time}</option>
+                        <option key={time.toString()}>{time}</option>
                     )}
                 </select>
+                {formik.errors.time &&
+                    <p className="text-red-400">Required</p>
+                }
                 {!availableTime && <p className="text-red-400">Please select a date to get a list of available times.</p>}
 
             </div>
             <div className="flex flex-col h-40">
                 <label>For</label>
-                <select className="bg-gray-200 p-4" placeholder="Please Select"  onChange={handleChange} name="for">
+                <select className="bg-gray-200 p-4" placeholder="Please Select"  onChange={formik.handleChange} value={formik.values.for} name="for">
+                    <option>Choose...</option>
                     <option>Party</option>
                     <option>Wedding</option>
                     <option>Casual</option>
                 </select>
+                {formik.errors.for &&
+                    <p className="text-red-400">Required</p>
+                }
             </div>
             <div className="flex flex-col h-40">
                 <label>Table</label>
-                <select className="bg-gray-200 p-4"  onChange={handleChange} name="table">
+                <select className="bg-gray-200 p-4"  onChange={formik.handleChange} value={formik.values.table} name="table">
+                    <option>Choose...</option>
                     <option>Table</option>
                     <option>Booth</option>
                 </select>
+                {formik.errors.table &&
+                    <p className="text-red-400">Required</p>
+                }
             </div>
             <div className="flex flex-col">
                 <label>Special Requests</label>
-                <textarea className="bg-gray-200 " type="text"  onChange={handleChange} name="specialRequests"/>
+                <textarea className="bg-gray-200 " type="text"  onChange={formik.handleChange} value={formik.values.specialRequests} name="specialRequests"/>
             </div>
-            <button className="bg-yellow-400 hover:bg-yellow-600 hover:text-white rounded py-2 px-4" onClick={handleClick}>Submit Reservation</button>
+            <button className={`${Object.keys(formik.errors).length>0} ? ${"bg-yellow-400 hover:bg-yellow-600 hover:text-white rounded py-2 px-4 disabled"} : ${"bg-yellow-600 hover:text-white rounded py-2 px-4"}`} disabled={Object.keys(formik.errors).length>=0 ? true : false } onClick={handleClick}>Submit Reservation</button>
         </form>
     </div>
     </>
