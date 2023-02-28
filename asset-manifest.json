@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/metacapstone/static/css/main.6d91aa69.css",
+    "main.css": "/metacapstone/static/css/main.55e706cc.css",
     "main.js": "/metacapstone/static/js/main.b1f15296.js",
     "static/media/food1.png": "/metacapstone/static/media/food1.b3b48bb82fcaced0c858.png",
     "static/media/pasta.jpg": "/metacapstone/static/media/pasta.e17c2ae4aef9e2a4c40e.jpg",
@@ -11,11 +11,11 @@
     "static/media/owner.jpg": "/metacapstone/static/media/owner.2026cc67932f0172e9cd.jpg",
     "static/media/logo.png": "/metacapstone/static/media/logo.e68246686f716ff6e5d8.png",
     "index.html": "/metacapstone/index.html",
-    "main.6d91aa69.css.map": "/metacapstone/static/css/main.6d91aa69.css.map",
+    "main.55e706cc.css.map": "/metacapstone/static/css/main.55e706cc.css.map",
     "main.b1f15296.js.map": "/metacapstone/static/js/main.b1f15296.js.map"
   },
   "entrypoints": [
-    "static/css/main.6d91aa69.css",
+    "static/css/main.55e706cc.css",
     "static/js/main.b1f15296.js"
   ]
 }
